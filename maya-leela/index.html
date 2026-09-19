@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bal Ganesha: Maya Leela - 50 Level Devil Trials</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .level-select-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #levelSelect {
+            background: #271202;
+            color: #ffd700;
+            border: 1px solid #d97706;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            max-width: 180px;
+        }
+        .btn-nav {
+            background: rgba(217, 119, 6, 0.25);
+            border: 1px solid #d97706;
+            color: #ffd700;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover {
+            background: #d97706;
+            color: #000;
+        }
+        .btn-restart-intro {
+            background: linear-gradient(135deg, #b45309, #78350f);
+            color: #fef08a;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .btn-restart-intro:hover {
+            background: #d97706;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header & HUD -->
+        <div class="header-bar">
+            <div class="title-section">
+                <h1>🐭 Mooshak's Leela: Quest for Vinayaka</h1>
+                <span class="subtitle" id="hudTitle">1. The Welcoming Door</span>
+            </div>
+            <div class="hud-stats">
+                <a href="../index.html" class="btn-restart-intro" title="Restart from Beginning Intro">🔄 Restart</a>
+                <div class="level-select-wrap">
+                    <button class="btn-nav" tabindex="-1" onclick="if(window.gameEngine){window.gameEngine.loadLevel(Math.max(0, window.gameEngine.currentLevelIndex - 1));} this.blur();" title="Previous Level">◀</button>
+                    <select id="levelSelect" tabindex="-1" onchange="this.blur()" onkeydown="if(event.key.startsWith('Arrow')){event.preventDefault();this.blur();}"></select>
+                    <button class="btn-nav" tabindex="-1" onclick="if(window.gameEngine){window.gameEngine.loadLevel(window.gameEngine.currentLevelIndex + 1);} this.blur();" title="Next Level">▶</button>
+                </div>
+                <!-- Prominent NEXT LEVEL button in top header -->
+                <button id="btnNextLevel" class="btn-next-level" style="display: none;" onclick="if(window.gameEngine){window.gameEngine.nextLevel();}">
+                    ✨ NEXT LEVEL ➡️
+                </button>
+                <div class="stat-badge">
+                    <span>Level:</span>
+                    <span id="hudLevel">1 / 50</span>
+                </div>
+                <div class="stat-badge" title="Genuinely completed levels">
+                    <span>Completed:</span>
+                    <span id="hudCompleted">0 / 50</span> ✅
+                </div>
+                <div class="stat-badge" title="Sacred Modaks collected">
+                    <span>Modaks:</span>
+                    <span id="hudModaks">0</span> 🟡
+                </div>
+                <div class="stat-badge" title="Levels skipped via level selector">
+                    <span>Skipped:</span>
+                    <span id="hudSkipped">0</span> ⏭️
+                </div>
+                <div class="stat-badge">
+                    <span>Mishaps:</span>
+                    <span id="hudDeaths">0</span> 💀
+                </div>
+                <button class="btn-icon" id="btnMute" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="if(window.gameEngine && confirm('Reset progress and start fresh from Level 1?')){window.gameEngine.resetAllProgress();}" title="Reset to Level 1">🔄</button>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Troll Notification Banner -->
+            <div class="troll-banner" id="trollBanner">
+                A simple stroll to the Sanctum... or is it?
+            </div>
+
+            <!-- Grand Victory Modal -->
+            <div class="modal-overlay" id="victoryModal">
+                <div class="modal-card">
+                    <h2>🎉 Ganpati Bappa Morya! 🎉</h2>
+                    <p>You have conquered all 50 trials of Maya and guided Mooshak safely to deliver the Sacred Modaks to Vinayaka!</p>
+                    
+                    <div class="modal-stats">
+                        <div class="m-stat">
+                            <span class="label">Completed</span>
+                            <span class="value" id="finalCompleted">0 / 50</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Skipped</span>
+                            <span class="value" id="finalSkipped">0</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Total Mishaps</span>
+                            <span class="value" id="finalDeaths">0</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Sacred Modaks</span>
+                            <span class="value" id="finalModaks">All!</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn-primary" id="btnPlayAgain" onclick="if(window.gameEngine){window.gameEngine.resetAllProgress();}">🌸 Play Again (From Lvl 1)</button>
+                        <button class="btn-primary" style="background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; box-shadow: 0 4px 0 #1e3a8a;" onclick="if(window.gameEngine){window.gameEngine.closeVictoryModal();}">📜 Replay Any Level</button>
+                        <a href="/" class="btn-primary" style="background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fef08a; text-decoration: none;">🔄 Restart (Intro)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Controls Hint -->
+        <div class="controls-hint">
+            <div>Move: <span class="key-tag">A / D</span> or <span class="key-tag">← / →</span></div>
+            <div>Jump: <span class="key-tag">W</span> / <span class="key-tag">↑</span> / <span class="key-tag">Space</span></div>
+            <div>Restart: <span class="key-tag">R</span></div>
+            <div>Select Level: <span class="key-tag">Top Dropdown 👆</span></div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="touch-controls">
+            <div class="dpad">
+                <button class="touch-btn" id="btnLeft">◀</button>
+                <button class="touch-btn" id="btnRight">▶</button>
+            </div>
+            <div class="jump-btn-wrap">
+                <button class="touch-btn jump-btn" id="btnJump">JUMP ⬆</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts in strict dependency order -->
+    <script src="js/audio.js"></script>
+    <script src="js/ganesha.js"></script>
+    <script src="js/traps.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
