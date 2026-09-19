@@ -1,0 +1,848 @@
+/* Core Document Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  background-color: #030205;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Game Info Box Style */
+#gameInfo {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 25;
+  padding: 15px 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  pointer-events: none;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transition: opacity 0.5s ease;
+}
+
+#gameInfo h1 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+
+#gameInfo p {
+  font-size: 13px;
+  color: #e0b468;
+}
+
+/* Top Action Controls Container */
+.top-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 30;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-ctrl {
+  background: rgba(3, 2, 5, 0.75);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #ffd700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-ctrl:hover {
+  background: #ffd700;
+  color: #030205;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-ctrl:active {
+  transform: translateY(0);
+}
+
+/* Full Screen Viewport Container */
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+}
+
+/* CRT Scanline Overlay */
+.game-container::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+  z-index: 15;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* 3D Camera Dolly Effect Wrapper */
+.camera-rig {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: cameraDolly 12s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+@keyframes cameraDolly {
+  0% { transform: scale(1.12) translateY(15px); }
+  70% { transform: scale(1.0) translateY(0); }
+  100% { transform: scale(1.02) translateY(-5px); }
+}
+
+/* Temple Environment Background */
+.temple-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 45%, #2a1b0a 0%, #0d0601 60%, #020100 100%);
+}
+
+/* Ambient God Rays */
+.god-rays {
+  position: absolute;
+  top: -50%;
+  left: 15%;
+  width: 70%;
+  height: 200%;
+  background: linear-gradient(105deg, 
+    transparent 20%, 
+    rgba(255, 200, 80, 0.12) 38%, 
+    transparent 45%, 
+    rgba(255, 215, 0, 0.18) 50%, 
+    transparent 62%);
+  filter: blur(20px);
+  opacity: 0;
+  animation: fadeInRays 3s ease-in 1s forwards;
+}
+
+@keyframes fadeInRays {
+  0% { opacity: 0; }
+  100% { opacity: 0.8; }
+}
+
+/* Ancient Temple Pillars */
+.pillar {
+  position: absolute;
+  bottom: 0;
+  width: 12%;
+  height: 100%;
+  background: linear-gradient(90deg, #090502, #1f1106, #2d190b, #0d0602);
+  border-top: 15px solid #d4af37;
+  box-shadow: inset 0 0 40px #000;
+  z-index: 2;
+}
+.pillar.left { left: 0%; }
+.pillar.right { right: 0%; }
+
+/* Atmospheric Moving Fog Layer */
+.fog-layer {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 35%;
+  background: linear-gradient(to top, rgba(212, 175, 55, 0.15), transparent);
+  filter: blur(25px);
+  animation: fogMove 25s linear infinite;
+  z-index: 4;
+}
+
+@keyframes fogMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Main Divine Glow Aura Behind Character */
+.divine-aura {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(500px, 80vw);
+  height: min(500px, 80vw);
+  background: radial-gradient(circle, rgba(255, 204, 0, 0.6) 0%, rgba(255, 102, 0, 0.25) 45%, transparent 75%);
+  border-radius: 50%;
+  filter: blur(35px);
+  opacity: 0;
+  z-index: 3;
+  animation: auraGlow 3s ease-out 1.5s forwards, auraPulse 4s ease-in-out infinite alternate 4.5s;
+}
+
+@keyframes auraGlow {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes auraPulse {
+  0% { transform: translate(-50%, -50%) scale(1); filter: blur(35px); }
+  100% { transform: translate(-50%, -50%) scale(1.15); filter: blur(45px); }
+}
+
+/* Character Stage Layout Setup */
+.stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Bal Ganesha Main Artwork Wrapper */
+.ganesha-wrapper {
+  position: relative;
+  width: auto;
+  height: 85vh;
+  max-width: 90vw;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: ganeshReveal 3.5s cubic-bezier(0.1, 0.8, 0.2, 1) 0.5s forwards;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ganesha-img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 18px;
+  filter: drop-shadow(0 0 35px rgba(255, 204, 0, 0.45)) contrast(1.05) brightness(0.95);
+}
+
+@keyframes ganeshReveal {
+  0% { opacity: 0; transform: scale(1.05); }
+  100% { opacity: 0.95; transform: scale(1); }
+}
+
+/* Floating Particles & Flower Petals */
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, #ffd700, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 5;
+  animation: particleFloat 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.petal {
+  position: absolute;
+  width: 14px;
+  height: 20px;
+  background: #ff7700;
+  border-radius: 50% 0 50% 50%;
+  opacity: 0;
+  z-index: 5;
+  animation: petalFall 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particleFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-150px) scale(1.3); }
+}
+
+@keyframes petalFall {
+  0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+  20% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(600px) rotate(360deg); }
+}
+
+/* Golden Flash Transition Overlay */
+.flash-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #fff7c2 0%, #ffd700 50%, #ff8c00 100%);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  animation: goldenExplosion 1.5s ease-in-out 8s forwards;
+}
+
+@keyframes goldenExplosion {
+  0% { opacity: 0; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Game Menu UI Control Overlays */
+.ui-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.25);
+  animation: showUI 2s ease-out 9s forwards;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+@keyframes showUI {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); pointer-events: auto; }
+}
+
+/* Fixed Fluid Game Title Header */
+.game-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(2.2rem, 7.5vw, 4.2rem);
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(180deg, #fffcd4 0%, #ffd700 45%, #caa115 75%, #7a4e00 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.4);
+  letter-spacing: 4px;
+  margin-bottom: 2px;
+  width: 90%;
+  max-width: 800px;
+}
+
+/* Subtitle Configuration */
+.subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 3.2vw, 1.6rem);
+  font-weight: 800;
+  color: #f3ca83;
+  letter-spacing: 10px;
+  margin-bottom: 40px;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+  animation: subtitleFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes subtitleFloat {
+  0% { transform: translateY(0); text-shadow: 0 4px 6px rgba(0,0,0,0.9); }
+  100% { transform: translateY(-6px); text-shadow: 0 10px 20px rgba(255, 215, 0, 0.3); }
+}
+
+/* Instructions on start screen */
+.instructions-tip {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: #e0b468;
+  margin-bottom: 25px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Button Component Animations */
+@keyframes buttonPulse {
+  0% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6); }
+  50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.9); }
+  100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6); }
+}
+
+.btn-start {
+  padding: 16px 45px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  font-weight: 800;
+  color: #2b1400;
+  background: linear-gradient(180deg, #ffe066 0%, #d4af37 100%);
+  border: 2px solid #fff3a8;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 3px;
+  animation: buttonPulse 3s infinite ease-in-out;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-start::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg) translateX(-100%);
+  transition: transform 0.6s ease-in-out;
+}
+
+.btn-start:hover::after {
+  transform: rotate(30deg) translateX(100%);
+}
+
+.btn-start:hover {
+  transform: scale(1.06);
+  background: linear-gradient(180deg, #ffffff 0%, #ffd700 100%);
+}
+
+/* =======================================================
+   GAME ARENA & HUD LAYER STYLING (ACTIVE PLAY MODE)
+======================================================= */
+.game-arena {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.game-arena.active {
+  display: flex;
+}
+
+/* HUD Top Bar */
+.game-hud {
+  width: 100%;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 22;
+  background: linear-gradient(180deg, rgba(10, 5, 2, 0.85) 0%, rgba(10, 5, 2, 0) 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.hud-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hud-badge {
+  background: rgba(18, 10, 3, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+}
+
+.hud-badge .label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #cca352;
+  text-transform: uppercase;
+}
+
+.hud-badge .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Lives Diyas */
+.lives-container {
+  display: flex;
+  gap: 6px;
+  font-size: 20px;
+}
+
+.diya-icon {
+  filter: drop-shadow(0 0 6px #ff9900);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+.diya-icon.lost {
+  opacity: 0.25;
+  filter: grayscale(1);
+  transform: scale(0.8);
+}
+
+/* Combo Indicator */
+.combo-badge {
+  color: #ff9d00;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 150, 0, 0.5);
+  transition: all 0.2s ease;
+  display: none;
+}
+
+.combo-badge.active {
+  display: block;
+  animation: comboPulse 0.6s infinite alternate;
+}
+
+@keyframes comboPulse {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(255, 140, 0, 0.4); }
+  100% { transform: scale(1.08); box-shadow: 0 0 16px rgba(255, 200, 0, 0.7); }
+}
+
+/* Canvas Area */
+.canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 21;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Floating Scores & Catch Effects */
+.floating-text {
+  position: absolute;
+  font-family: 'Cinzel Decorative', cursive;
+  font-weight: 700;
+  pointer-events: none;
+  animation: floatUpFade 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  z-index: 25;
+}
+
+@keyframes floatUpFade {
+  0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
+  50% { transform: translate(-50%, -35px) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -70px) scale(1); }
+}
+
+/* Mobile Touch Control Touchpads */
+.touch-controls {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: none;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 26;
+  pointer-events: none;
+}
+
+@media (pointer: coarse), (max-width: 800px) {
+  .touch-controls {
+    display: flex;
+  }
+}
+
+.touch-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  backdrop-filter: blur(8px);
+  color: #ffd700;
+  font-size: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+  user-select: none;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  transition: transform 0.1s, background 0.1s;
+}
+
+.touch-btn:active {
+  background: rgba(255, 215, 0, 0.5);
+  transform: scale(0.92);
+}
+
+/* Modals & Overlays */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 2, 5, 0.85);
+  backdrop-filter: blur(10px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 28;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-card {
+  background: linear-gradient(145deg, #1b0f05 0%, #0c0702 100%);
+  border: 2px solid #d4af37;
+  border-radius: 16px;
+  padding: 36px 44px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.35);
+  animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-card h2 {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 28px;
+  color: #ffd700;
+  margin-bottom: 12px;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.modal-card p {
+  color: #d1b47a;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.modal-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 28px;
+  padding: 16px 0;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.m-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-stat .label {
+  font-size: 11px;
+  color: #bfa168;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.m-stat .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-primary {
+  padding: 12px 28px;
+  background: linear-gradient(180deg, #ffe066 0%, #d4af37 100%);
+  border: 1px solid #fff3a8;
+  color: #261300;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  background: #ffd700;
+}
+
+.btn-secondary {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #e0b468;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: #ffd700;
+  border-color: #ffd700;
+}
+
+/* 3000 Milestone Unlocked Game Button */
+.btn-game-unlocked {
+  background: linear-gradient(135deg, #ff0055 0%, #ff5e00 50%, #ffbb00 100%);
+  border: 2px solid #fff;
+  color: #fff !important;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  box-shadow: 0 0 20px rgba(255, 94, 0, 0.8), inset 0 0 10px rgba(255,255,255,0.7);
+  animation: gameBtnGlow 1.2s infinite alternate;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.25s ease;
+  z-index: 30;
+}
+
+.btn-game-unlocked:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 0 35px rgba(255, 200, 0, 1), inset 0 0 15px #fff;
+}
+
+@keyframes gameBtnGlow {
+  0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 15px rgba(255, 94, 0, 0.6); }
+  100% { transform: scale(1.06); filter: brightness(1.25); box-shadow: 0 0 30px rgba(255, 215, 0, 0.95); }
+}
+
+/* Progress toward 3000 badge in HUD */
+.milestone-target-badge {
+  background: rgba(30, 15, 4, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: #ffd700;
+}
+
+.milestone-progress-bar {
+  width: 65px;
+  height: 8px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.milestone-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff9900, #ffd700);
+  transition: width 0.3s ease;
+}
+
+/* 3000 Milestone Modal Celebration */
+.milestone-modal-card {
+  background: radial-gradient(circle at 50% 30%, #3a1c04 0%, #150901 80%, #080300 100%);
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 60px rgba(255, 215, 0, 0.7), inset 0 0 30px rgba(255, 215, 0, 0.3);
+  border-radius: 20px;
+  padding: 38px 42px;
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+  animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.milestone-modal-card h1 {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 26px;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  margin-bottom: 8px;
+}
+
+.milestone-modal-card .trophy-icon {
+  font-size: 52px;
+  margin-bottom: 12px;
+  animation: floatTrophy 2s infinite ease-in-out alternate;
+  display: inline-block;
+}
+
+@keyframes floatTrophy {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-8px) scale(1.1); }
+}
+
+.cheat-test-btn {
+  opacity: 0.6;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e0b468;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  cursor: pointer;
+  font-family: sans-serif;
+  transition: all 0.2s;
+}
+
+.cheat-test-btn:hover {
+  opacity: 1;
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  border-color: #ffd700;
+}
+

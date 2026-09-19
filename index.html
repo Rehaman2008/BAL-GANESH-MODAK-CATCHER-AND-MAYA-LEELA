@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bal Ganesh Modak Catcher - Game</title>
+    <!-- External CSS file -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for cinematic titles & numerals -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Game Info Box -->
+    <div id="gameInfo">
+        <h1>Divine Realm</h1>
+        <p>Catch sacred Modaks & Laddus for Bal Ganesha!</p>
+    </div>
+
+    <!-- Top Action Controls -->
+    <div class="top-controls">
+        <button class="btn-game-unlocked" id="topGameBtn" onclick="launchNextGame()" style="display:none;">🎮 PLAY MAYA LEELA</button>
+        <button class="btn-ctrl" id="btnAudio" onclick="toggleAudio()">🔊 Sound</button>
+        <button class="btn-ctrl" onclick="skipIntro()">⏩ Skip Intro</button>
+        <button class="btn-ctrl" onclick="resetAnimation()">🔄 Replay Intro</button>
+    </div>
+
+    <!-- Game Viewport -->
+    <div class="game-container" id="viewport">
+        <!-- Camera Movement Container -->
+        <div class="camera-rig" id="cameraRig">
+            <div class="temple-bg"></div>
+            <div class="god-rays"></div>
+
+            <!-- Pillars -->
+            <div class="pillar left"></div>
+            <div class="pillar right"></div>
+
+            <!-- Aura & Atmosphere -->
+            <div class="divine-aura"></div>
+            <div class="fog-layer"></div>
+
+            <!-- Dynamic Floating Particles -->
+            <div id="particle-container"></div>
+
+            <!-- Main Character Stage -->
+            <div class="stage">
+                <div class="ganesha-wrapper">
+                    <!-- High-res Bal Ganesha with local offline fallback -->
+                    <img 
+                        src="https://images.unsplash.com/photo-1567591414240-e59344407519?auto=format&fit=crop&w=1000&q=80" 
+                        onerror="this.onerror=null; this.src='images.jpg';"
+                        alt="Bal Ganesha" 
+                        class="ganesha-img"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen Flash Transition -->
+        <div class="flash-overlay" id="flashOverlay"></div>
+
+        <!-- Start Game Menu UI Layer -->
+        <div class="ui-layer" id="uiLayer">
+            <h1 class="game-title">BAL GANESH</h1>
+            <div class="subtitle">MODAK CATCHER</div>
+            <div class="instructions-tip">
+                🕹️ Move mouse / finger or use Left &amp; Right Arrow Keys to catch sweets!
+            </div>
+            <button class="btn-start" onclick="startGame()">PRESS START</button>
+        </div>
+
+        <!-- Interactive Gameplay Arena Layer -->
+        <div class="game-arena" id="gameArena">
+            <!-- HUD Top Bar -->
+            <div class="game-hud">
+                <div class="hud-group">
+                    <div class="hud-badge">
+                        <span class="label">Score</span>
+                        <span class="value" id="hudScore">0</span>
+                    </div>
+                    <div class="milestone-target-badge" id="hudMilestone">
+                        <span>🎯 3000 Target</span>
+                        <div class="milestone-progress-bar">
+                            <div class="milestone-progress-fill" id="milestoneFill"></div>
+                        </div>
+                    </div>
+                    <button class="btn-game-unlocked" id="hudGameBtn" onclick="launchNextGame()" style="display:none;" title="Milestone Unlocked! Play Next Game">🎮 PLAY GAME</button>
+                    <button class="cheat-test-btn" onclick="cheatAddPoints(500)" title="Quick test: +500 pts">+500 ⚡</button>
+                    <div class="combo-badge" id="hudCombo">Combo x1!</div>
+                </div>
+
+                <div class="hud-group">
+                    <div class="hud-badge">
+                        <span class="label">Level</span>
+                        <span class="value" id="hudLevel">1</span>
+                    </div>
+                    <div class="hud-badge">
+                        <span class="label">Diyas</span>
+                        <div class="lives-container">
+                            <span class="diya-icon" id="diya1">🪔</span>
+                            <span class="diya-icon" id="diya2">🪔</span>
+                            <span class="diya-icon" id="diya3">🪔</span>
+                        </div>
+                    </div>
+                    <button class="btn-ctrl" id="btnPause" onclick="togglePause()">⏸️ Pause</button>
+                </div>
+            </div>
+
+            <!-- Canvas Action Layer -->
+            <div class="canvas-wrapper">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <!-- On-Screen Touch Controls (Mobile Friendly) -->
+            <div class="touch-controls">
+                <button class="touch-btn" id="touchLeft">◀</button>
+                <button class="touch-btn" id="touchRight">▶</button>
+            </div>
+
+            <!-- 3000 Score Milestone Unlock Modal -->
+            <div class="modal-overlay" id="milestoneModal">
+                <div class="milestone-modal-card">
+                    <div class="trophy-icon">🏆✨</div>
+                    <h1>3,000 SACRED POINTS!</h1>
+                    <p>Supreme devotion achieved! Bal Ganesha has unlocked the Sacred Trial: <strong>Maya Leela</strong>!</p>
+                    <div style="margin: 24px 0;">
+                        <button class="btn-game-unlocked" style="font-size: 15px; padding: 14px 32px;" onclick="launchNextGame()">🎮 ENTER GAME: MAYA LEELA ➔</button>
+                    </div>
+                    <button class="btn-secondary" onclick="closeMilestoneModal()">Continue Modak Catcher</button>
+                </div>
+            </div>
+
+            <!-- Game Over / Victory Modal -->
+            <div class="modal-overlay" id="gameOverModal">
+                <div class="modal-card">
+                    <h2>🙏 Prasad Utsav 🙏</h2>
+                    <p>Bal Ganesha is delighted with your divine offerings!</p>
+                    
+                    <div class="modal-stats">
+                        <div class="m-stat">
+                            <span class="label">Final Score</span>
+                            <span class="value" id="finalScore">0</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Best High</span>
+                            <span class="value" id="finalHighScore">0</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Sweets Caught</span>
+                            <span class="value" id="finalModaks">0</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="label">Max Combo</span>
+                            <span class="value" id="finalCombo">x1</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button class="btn-game-unlocked" id="modalGameBtn" onclick="launchNextGame()" style="display:none;">🎮 PLAY GAME</button>
+                        <button class="btn-primary" onclick="startGame()">Play Again 🔄</button>
+                        <button class="btn-secondary" onclick="returnToIntro()">Intro 🏛️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gameplay Scripts -->
+    <script src="game.js"></script>
+
+    <!-- Intro Animation Scripts -->
+    <script>
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            // Golden Light Orbs
+            for (let i = 0; i < 45; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 8 + 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = (Math.random() * 70 + 15) + '%';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                p.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(p);
+            }
+
+            // Floating Orange Petals
+            for (let i = 0; i < 20; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.top = '-10%';
+                petal.style.animationDelay = (Math.random() * 6 + 1) + 's';
+                petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                container.appendChild(petal);
+            }
+        }
+
+        function skipIntro() {
+            const ui = document.getElementById('uiLayer');
+            const flash = document.getElementById('flashOverlay');
+            if (ui) {
+                ui.style.animation = 'none';
+                ui.style.opacity = '1';
+                ui.style.pointerEvents = 'auto';
+            }
+            if (flash) {
+                flash.style.display = 'none';
+            }
+        }
+
+        function resetAnimation() {
+            if (typeof returnToIntro === 'function') {
+                returnToIntro();
+            }
+            const cameraRig = document.getElementById('cameraRig');
+            const flash = document.getElementById('flashOverlay');
+            const ui = document.getElementById('uiLayer');
+            const ganesha = document.querySelector('.ganesha-wrapper');
+            const aura = document.querySelector('.divine-aura');
+
+            const restartElem = (el) => {
+                if (!el) return;
+                el.style.animation = 'none';
+                void el.offsetHeight;
+                el.style.animation = '';
+            };
+
+            restartElem(cameraRig);
+            restartElem(flash);
+            restartElem(ui);
+            restartElem(ganesha);
+            restartElem(aura);
+
+            if (ui) {
+                ui.style.opacity = '';
+                ui.style.pointerEvents = '';
+            }
+            if (flash) {
+                flash.style.display = '';
+            }
+
+            createParticles();
+        }
+
+        // Initialize particles on load
+        createParticles();
+    </script>
+</body>
+</html>
